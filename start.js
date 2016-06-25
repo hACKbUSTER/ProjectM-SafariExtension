@@ -8,20 +8,11 @@
     PREFIX: 'projectMPlugin',
   };
 
-  settings.RECORDING_SERVICE_URL = 'https://recordtest.agorabeckon.com:9002/agora/recording/genToken?channelname=' + settings.CHANNEL;
-
   var client = AgoraRTC.createRtcClient();
   var localStream;
   var remoteStreamList = [];
   var $container = $('<div id="' + settings.PREFIX + '"></div>');
   $("body").append($container);
-
-  function calculateVideoSize(multiple) {
-    return {
-      width: 320,
-      height: 240
-    };
-  }
 
   function initLocalStream() {
     if (localStream) {
@@ -38,7 +29,7 @@
       audio  : true,
       video  : true,
       screen : false,
-      local  : true
+      local  : true,
     });
 
     localStream.setVideoProfile(settings.VIDEO_PROFILE);
@@ -47,10 +38,18 @@
       console.log("Get UserMedia successfully");
       console.log(localStream);
 
-      client.publish(localStream, function (err) {
-        console.log("Timestamp: " + Date.now());
-        console.log("Publish local stream error: " + err);
+      client.publish(localStream, function () {
+        console.log('Published successfully');
+      }, function (err) {
+        console.error("Timestamp: " + Date.now());
+        console.error("Publish local stream error: ", err);
       });
+
+      var selector = settings.PREFIX + '0';
+      var $dom = $('<div class="one-stream"><div id="' + selector + '" data-stream-id="' + selector + '"></div><span class="mute-icon"></span></div>');
+
+      $container.append($dom);
+      localStream.play(selector);
 
       render();
     }, function(err) {
@@ -98,6 +97,8 @@
 
       return oneStream;
     });
+
+    render();
   }
 
   // init RTC
@@ -108,6 +109,9 @@
       console.log("User " + uid + " join channel successfully");
       console.log("Timestamp: " + Date.now());
       localStream = initLocalStream();
+    }, function(err) {
+      console.error('Failed to execute join channel. Timestamp: ', Date.now());
+      console.error(err);
     });
   }, function(err) {
     if (err) {
@@ -172,7 +176,6 @@
       if (!oneStream.$dom) {
         var $dom = $('<div class="one-stream"><div id="' + selector + '" data-stream-id="' + selector + '"></div><span class="mute-icon"></span></div>');
 
-        $dom.css(videoStyle);
         $dom.find('.mute-icon').click(toggleStreamAudio.bind(null, oneStream.id));
         $container.append($dom);
         oneStream.stream.play(selector);
