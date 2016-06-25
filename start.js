@@ -1,10 +1,10 @@
 (function($) {
   var settings = {
-    CHANNEL: encodeUrlComponent(window.location.pathname),
+    CHANNEL: encodeURIComponent(window.location.pathname),
     VENDOR_KEY: '92dc1a5092d34478934cb16935f6debc',
     RESOLUTION: '480p',
     FRAME_RATE: 15,
-    VIDEO_PROFILE: '480p',
+    VIDEO_PROFILE: '480p'
   };
 
   settings.RECORDING_SERVICE_URL = 'https://recordtest.agorabeckon.com:9002/agora/recording/genToken?channelname=' + settings.CHANNEL;
@@ -16,7 +16,7 @@
   function calculateVideoSize(multiple) {
     return {
       width: 320,
-      height: 240,
+      height: 240
     };
   }
 
@@ -35,7 +35,7 @@
       audio  : true,
       video  : true,
       screen : false,
-      local  : true,
+      local  : true
     });
 
     localStream.setVideoProfile(settings.VIDEO_PROFILE);
@@ -62,7 +62,7 @@
     remoteStreamList.push({
       id: id,
       stream: stream,
-      audioEnabled: true,
+      audioEnabled: true
     });
 
     render();
@@ -160,7 +160,22 @@
   });
 
   function render() {
-    // TODO
+    $("div#plugin-video").remove();
+
+    const div = $('<div id="plugin"></div>');
+    div.css({
+      "top":"0px",
+      "bottom":"0px",
+      "left":"0px",
+      "position":"fixed",
+      "width":"160px",
+      "height":"640px",
+      "z-index":"65535"
+    });
+    remoteStreamList.forEach((v)=>{
+      div.append($(v));
+    });
+    $("body").append(div);
   }
 
   // subscribeMouseClickEvents();
