@@ -4,7 +4,8 @@
     VENDOR_KEY: '92dc1a5092d34478934cb16935f6debc',
     RESOLUTION: '480p',
     FRAME_RATE: 15,
-    VIDEO_PROFILE: '480p'
+    VIDEO_PROFILE: '480p',
+    PREFIX: 'projectMPlugin',
   };
 
   settings.RECORDING_SERVICE_URL = 'https://recordtest.agorabeckon.com:9002/agora/recording/genToken?channelname=' + settings.CHANNEL;
@@ -12,6 +13,8 @@
   var client = AgoraRTC.createRtcClient();
   var localStream;
   var remoteStreamList = [];
+  var $container = $('<div id="' + settings.PREFIX + '"></div>');
+  $("body").append($container);
 
   function calculateVideoSize(multiple) {
     return {
@@ -72,6 +75,7 @@
     remoteStreamList = remoteStreamList.filter(function(oneStream) {
       if (oneStream.id === id) {
         oneStream.stream.stop();
+        oneStream.$dom.remove();
       }
 
       return oneStream.id !== id;
@@ -84,8 +88,10 @@
     remoteStreamList = remoteStreamList.map(function(oneStream) {
       if (oneStream.id === id) {
         if (oneStream.stream.audioEnabled) {
+          oneStream.$dom.addClass('muted');
           oneStream.stream.disableAudio();
         } else {
+          oneStream.$dom.removeClass('muted');
           oneStream.stream.enableAudio();
         }
       }
@@ -160,26 +166,22 @@
   });
 
   function render() {
-    $("div#plugin-video").remove();
+    remoteStreamList.map(function(oneStream) {
+      var selector = settings.PREFIX + oneStream.id;
 
-    const div = $('<div id="plugin"></div>');
-    div.css({
-      "top":"0px",
-      "bottom":"0px",
-      "left":"0px",
-      "position":"fixed",
-      "width":"160px",
-      "height":"640px",
-      "z-index":"65535"
+      if (!oneStream.$dom) {
+        var $dom = $('<div class="one-stream"><div id="' + selector + '" data-stream-id="' + selector + '"></div><span class="mute-icon"></span></div>');
+
+        $dom.css(videoStyle);
+        $dom.find('.mute-icon').click(toggleStreamAudio.bind(null, oneStream.id));
+        $container.append($dom);
+        oneStream.stream.play(selector);
+        oneStream.$dom = $dom;
+      }
+
+      return oneStream;
     });
-    remoteStreamList.forEach((v)=>{
-      div.append($(v));
-    });
-    $("body").append(div);
   }
 
-  // subscribeMouseClickEvents();
-  // subscribeMouseHoverEvents();
   // subscribeWindowResizeEvent();
-  // $("#room-name-meeting").html(channel);
 }(jQuery));

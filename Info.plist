@@ -27,6 +27,10 @@
 				<string>start.js</string>
 			</array>
 		</dict>
+		<key>Stylesheets</key>
+		<array>
+			<string>start.css</string>
+		</array>
 		<key>Whitelist</key>
 		<array>
 			<string>http://v.youku.com/v_show/*</string>
