@@ -86,7 +86,7 @@
   function toggleStreamAudio(id) {
     remoteStreamList = remoteStreamList.map(function(oneStream) {
       if (oneStream.id === id) {
-        if (oneStream.stream.audioEnabled) {
+        if (oneStream.audioEnabled) {
           oneStream.$dom.addClass('muted');
           oneStream.stream.disableAudio();
         } else {
