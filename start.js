@@ -195,21 +195,44 @@
   $(document).keydown(function (event) {
     if (event.keyCode == 91) {
       if (isPlayingLocal) {
-        client.unpublish(localStream,function(err) {
+        /*client.unpublish(localStream,function(err) {
           console.log("stream unpublished");
           isPlayingLocal = false;
       }, function (err) {
         console.log("failed to unpublish stream");
+      });*/
+      remoteStreamList = remoteStreamList.filter(function(oneStream) {
+          console.log(oneStream);
+          oneStream.$dom.remove();
+          return false;
+        });
+        render();
+      client.leave(function() {
+        console.log("client leaves channel");
+        isPlayingLocal = false;
+      }, function(err) {
+        console.error("Timestamp: " + Date.now());
+        console.error("Client leaves channel error: ", err);
       });
       }
       else {
-        client.publish(localStream, function () {
+        /*client.publish(localStream, function () {
           console.log('Published successfully');
           isPlayingLocal = true;
         }, function (err) {
           console.error("Timestamp: " + Date.now());
           console.error("Publish local stream error: ", err);
-        });
+        });*/
+        client.join(settings.VENDOR_KEY, settings.CHANNEL, undefined, function(uid) {
+        isPlayingLocal = true;
+        settings.UID = uid;
+        console.log("User " + uid + " join channel successfully");
+        console.log("Timestamp: " + Date.now());
+        //localStream = initLocalStream();
+      }, function(err) {
+        console.error('Failed to execute join channel. Timestamp: ', Date.now());
+        console.error(err);
+      });
       }
     }
   });
