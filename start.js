@@ -11,6 +11,7 @@
   var client = AgoraRTC.createRtcClient();
   var localStream;
   var remoteStreamList = [];
+  var isPlayingLocal = false;
   var $container = $('<div id="' + settings.PREFIX + '"></div>');
   $("body").append($container);
 
@@ -46,12 +47,13 @@
       });
 
       var selector = settings.PREFIX + '0';
-      var $dom = $('<div class="one-stream" style=""><div id="' + selector + '" data-stream-id="' + selector + '"></div><span class="mute-icon"></span></div>');
+      var $dom = $('<div class="one-stream" style="display: none;"><div id="' + selector + '" data-stream-id="' + selector + '"></div><span class="mute-icon"></span></div>');
 
       //display: none;
 
       $container.append($dom);
       localStream.play(selector);
+      isPlayingLocal = true;
 
       render();
     }, function(err) {
@@ -189,6 +191,28 @@
       return oneStream;
     });
   }
+
+  $(document).keydown(function (event) {
+    if (event.keyCode == 91) {
+      if (isPlayingLocal) {
+        client.unpublish(localStream,function(err) {
+          console.log("stream unpublished");
+          isPlayingLocal = false;
+      }, function (err) {
+        console.log("failed to unpublish stream");
+      });
+      }
+      else {
+        client.publish(localStream, function () {
+          console.log('Published successfully');
+          isPlayingLocal = true;
+        }, function (err) {
+          console.error("Timestamp: " + Date.now());
+          console.error("Publish local stream error: ", err);
+        });
+      }
+    }
+  });
 
   // subscribeWindowResizeEvent();
 }(jQuery));
