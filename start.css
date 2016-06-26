@@ -6,12 +6,12 @@
   width: 320px;
   z-index: 65000;
   background: black;
-  box-shadow: -2px 2px 2px 2px rgba(74, 74, 74, 0.6);
+  box-shadow: -2px 0px 20px 2px rgba(74, 74, 74, 0.2);
 }
 
 #projectMPlugin .one-stream {
   width: 100%;
-  height: 240px;
+  height: 180px;
   margin: 0;
   position: relative;
 }
@@ -49,7 +49,7 @@
 
 #projectMPlugin .one-stream:hover .mute-icon {
   right: 45.625%;
-  bottom: 45.625%;
+  bottom: 60%;
   display: block;
 }
 

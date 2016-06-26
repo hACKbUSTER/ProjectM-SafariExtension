@@ -46,7 +46,9 @@
       });
 
       var selector = settings.PREFIX + '0';
-      var $dom = $('<div class="one-stream" style="display: none;"><div id="' + selector + '" data-stream-id="' + selector + '"></div><span class="mute-icon"></span></div>');
+      var $dom = $('<div class="one-stream" style=""><div id="' + selector + '" data-stream-id="' + selector + '"></div><span class="mute-icon"></span></div>');
+
+      //display: none;
 
       $container.append($dom);
       localStream.play(selector);
