@@ -2,9 +2,9 @@
   var settings = {
     CHANNEL: encodeURIComponent(window.location.pathname),
     VENDOR_KEY: '92dc1a5092d34478934cb16935f6debc',
-    RESOLUTION: '480p',
+    RESOLUTION: '360p',
     FRAME_RATE: 15,
-    VIDEO_PROFILE: '480p',
+    VIDEO_PROFILE: '360p',
     PREFIX: 'projectMPlugin',
   };
 
