@@ -2,15 +2,16 @@
   var settings = {
     CHANNEL: encodeURIComponent(window.location.pathname),
     VENDOR_KEY: '92dc1a5092d34478934cb16935f6debc',
-    RESOLUTION: '480p',
+    RESOLUTION: '360p',
     FRAME_RATE: 15,
-    VIDEO_PROFILE: '480p',
+    VIDEO_PROFILE: '360p',
     PREFIX: 'projectMPlugin',
   };
 
   var client = AgoraRTC.createRtcClient();
   var localStream;
   var remoteStreamList = [];
+  var isPlayingLocal = false;
   var $container = $('<div id="' + settings.PREFIX + '"></div>');
   $("body").append($container);
 
@@ -48,8 +49,11 @@
       var selector = settings.PREFIX + '0';
       var $dom = $('<div class="one-stream" style="display: none;"><div id="' + selector + '" data-stream-id="' + selector + '"></div><span class="mute-icon"></span></div>');
 
+      //display: none;
+
       $container.append($dom);
       localStream.play(selector);
+      isPlayingLocal = true;
 
       render();
     }, function(err) {
@@ -187,6 +191,51 @@
       return oneStream;
     });
   }
+
+  $(document).keydown(function (event) {
+    if (event.keyCode == 91) {
+      if (isPlayingLocal) {
+        /*client.unpublish(localStream,function(err) {
+          console.log("stream unpublished");
+          isPlayingLocal = false;
+      }, function (err) {
+        console.log("failed to unpublish stream");
+      });*/
+      remoteStreamList = remoteStreamList.filter(function(oneStream) {
+          console.log(oneStream);
+          oneStream.$dom.remove();
+          return false;
+        });
+        render();
+      client.leave(function() {
+        console.log("client leaves channel");
+        isPlayingLocal = false;
+      }, function(err) {
+        console.error("Timestamp: " + Date.now());
+        console.error("Client leaves channel error: ", err);
+      });
+      }
+      else {
+        /*client.publish(localStream, function () {
+          console.log('Published successfully');
+          isPlayingLocal = true;
+        }, function (err) {
+          console.error("Timestamp: " + Date.now());
+          console.error("Publish local stream error: ", err);
+        });*/
+        client.join(settings.VENDOR_KEY, settings.CHANNEL, undefined, function(uid) {
+        isPlayingLocal = true;
+        settings.UID = uid;
+        console.log("User " + uid + " join channel successfully");
+        console.log("Timestamp: " + Date.now());
+        //localStream = initLocalStream();
+      }, function(err) {
+        console.error('Failed to execute join channel. Timestamp: ', Date.now());
+        console.error(err);
+      });
+      }
+    }
+  });
 
   // subscribeWindowResizeEvent();
 }(jQuery));
